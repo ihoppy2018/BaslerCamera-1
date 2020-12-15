@@ -3,6 +3,7 @@
 #include "camerascene.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QRubberBand>
+#include "QRectF"
 
 #include "mypixmapitem.h"
 #include <QDebug>
@@ -180,7 +181,8 @@ void CameraScene::updateItemPos()
     mXInfo.setPos(topRight - QPointF(200, -10));
     mYInfo.setPos(topRight - QPointF(200, -40));
 
-    updateRect(QRectF(0, 0, 100, 100), sceneRect().center() - QPointF(50, 50));
+    QRectF rec =  QRectF(0, 0, 100, 100);
+    updateRect(rec, sceneRect().center() - QPointF(50, 50));
 }
 
 void CameraScene::updateXYInfo(qreal x, qreal y)

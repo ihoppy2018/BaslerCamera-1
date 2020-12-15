@@ -4,6 +4,7 @@
 #include "ui_cameraform.h"
 #include <QDebug>
 #include <QFileDialog>
+#include <QMetaType>
 
 CameraForm::CameraForm(QWidget *parent) :
     QWidget(parent),
@@ -19,6 +20,7 @@ CameraForm::CameraForm(QWidget *parent) :
     // 状态栏显示鼠标的坐标和所在像素的颜色
     connect(mScene, &CameraScene::sigImageInfo, this, &CameraForm::sigImageInfo);
     // 相机采集和显示
+    qRegisterMetaType<cv::Mat>("cv::Mat");  // 注册cv::Mat
     connect(mCamera, &MyCamera::sigGrabNewImage, this, &CameraForm::updateCameraImage);
 }
 
@@ -57,7 +59,8 @@ void CameraForm::updateROI(cv::Mat image, double width, double height, double x,
 //    QImage img((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_RGB888);
     QImage img((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_Indexed8);
     mScene->updateImage(img);
-    mScene->updateRect(QRectF(0, 0, width, height), QPointF(x, y));
+    QRectF rec = QRectF(0, 0, width, height);
+    mScene->updateRect(rec, QPointF(x, y));
 }
 
 void CameraForm::zoomIn()

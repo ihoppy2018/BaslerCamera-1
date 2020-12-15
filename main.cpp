@@ -5,8 +5,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-//    CameraWindow w;
-    CameraForm w;
+    CameraWindow w;
+    //CameraForm w;
     w.show();
 
     return a.exec();

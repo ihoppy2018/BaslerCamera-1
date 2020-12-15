@@ -6,6 +6,7 @@
 #include <pylon/PylonIncludes.h>
 #include <pylon/gige/PylonGigEIncludes.h>
 #include "opencv2/opencv.hpp"
+#include "QMutex"
 
 // Settings to use Basler GigE cameras.
 using namespace Basler_GigECameraParams;

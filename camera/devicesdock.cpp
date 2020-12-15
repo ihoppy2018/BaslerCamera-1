@@ -41,6 +41,7 @@ void DevicesDock::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 void DevicesDock::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     qDebug() << "itemClicked" << item->text();
-    emit sigActivated(item->text());
+    QString str = item->text();
+    emit sigActivated(str);
 }
 

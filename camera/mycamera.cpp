@@ -90,14 +90,17 @@ void MyCamera::OnImageGrabbed(CInstantCamera &camera, const CGrabResultPtr &grab
         if (!image.empty()) {
             //cv::imwrite("C:\\Users\\CF\\Desktop\\save\\2.jpg", image);
             // 调试发现，如果不clone的话，会导致后续错误，可能是共用了BUFFER问题
+            qDebug() << "send sigle of sigGrabNewImage";
             emit sigGrabNewImage(image.clone());
         }
-        // 本地模拟
+         //本地模拟
 //        int position = qrand() % 6;
 //        QString file = QString("D:\\TestResult\\0\\%1.bmp").arg(position);
+//    QString file = QString("E:\\Dataset\\my_pictures\\basler_img\\test.bmp");
 //        cv::Mat image = cv::imread(cv::String(file.toUtf8().data()));
 //        emit sigGrabNewImage(image);
-//        qDebug() << position;
+
+//        qDebug() << image.cols;
     } else {
         qWarning() << QString("An exception occurred: ") << grabResult->GetErrorDescription();
     }

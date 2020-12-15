@@ -52,23 +52,26 @@ FORMS += \
     camera/devicesdock.ui \
     camera/paramdock.ui
 
-#Basler相机
-win32: LIBS += -L$$PWD/baslerSDK/pylon/lib/x64/ -lGCBase_MD_VC141_v3_1_Basler_pylon_v5_1
-win32: LIBS += -L$$PWD/baslerSDK/pylon/lib/x64/ -lGenApi_MD_VC141_v3_1_Basler_pylon_v5_1
-win32: LIBS += -L$$PWD/baslerSDK/pylon/lib/x64/ -lPylonBase_v5_1
-win32: LIBS += -L$$PWD/baslerSDK/pylon/lib/x64/ -lPylonC
-win32: LIBS += -L$$PWD/baslerSDK/pylon/lib/x64/ -lPylonGUI_v5_1
-win32: LIBS += -L$$PWD/baslerSDK/pylon/lib/x64/ -lPylonUtility_v5_1
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
 
-INCLUDEPATH += $$PWD/baslerSDK/pylon/include
+win32:CONFIG(release, debug|release): LIBS += -LD:/opencv/build/x64/vc14/lib/ -lopencv_world331
+else:win32:CONFIG(debug, debug|release): LIBS += -LD:/opencv/build/x64/vc14/lib/ -lopencv_world331d
+else:unix: LIBS += -LD:/opencv/build/x64/vc14/lib/ -lopencv_world331
 
-# OpenCV库文件
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/opencv/build/x64/vc14/lib/ -lopencv_world341
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/opencv/build/x64/vc14/lib/ -lopencv_world341d
+INCLUDEPATH += D:/opencv/build/include
+DEPENDPATH += D:/opencv/build/include
 
-INCLUDEPATH += $$PWD/opencv/build/x64/vc14
-DEPENDPATH += $$PWD/opencv/build/x64/vc14
-INCLUDEPATH += $$PWD/opencv/build/include
+unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lPylonBase_v6_0
+unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lGCBase_MD_VC141_v3_1_Basler_pylon
+unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lGenApi_MD_VC141_v3_1_Basler_pylon
+unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lPylonC
+unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lPylonGUI_v6_0
+unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lPylonUtility_v6_0
+
+INCLUDEPATH += 'D:/Program Files (x86)/Tools/BaslerDevelopment/include'
+DEPENDPATH += 'D:/Program Files (x86)/Tools/BaslerDevelopment/include'
 
 RESOURCES += \
     image.qrc
