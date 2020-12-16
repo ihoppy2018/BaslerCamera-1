@@ -90,7 +90,7 @@ void MyCamera::OnImageGrabbed(CInstantCamera &camera, const CGrabResultPtr &grab
         if (!image.empty()) {
             //cv::imwrite("C:\\Users\\CF\\Desktop\\save\\2.jpg", image);
             // 调试发现，如果不clone的话，会导致后续错误，可能是共用了BUFFER问题
-            qDebug() << "send sigle of sigGrabNewImage";
+            //qDebug() << "send sigle of sigGrabNewImage";
             emit sigGrabNewImage(image.clone());
         }
          //本地模拟
