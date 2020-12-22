@@ -33,7 +33,8 @@ SOURCES += \
     camera/mycamera.cpp \
     camera/mylistwidget.cpp \
     camera/mypixmapitem.cpp \
-    camera/paramdock.cpp
+    camera/paramdock.cpp \
+    myalgorithm.cpp
 
 HEADERS += \
     camera/cameraform.h \
@@ -44,7 +45,8 @@ HEADERS += \
     camera/mycamera.h \
     camera/mylistwidget.h \
     camera/mypixmapitem.h \
-    camera/paramdock.h
+    camera/paramdock.h \
+    myalgorithm.h
 
 FORMS += \
     camera/cameraform.ui \
@@ -55,7 +57,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
+# opencv
 win32:CONFIG(release, debug|release): LIBS += -LD:/opencv/build/x64/vc14/lib/ -lopencv_world331
 else:win32:CONFIG(debug, debug|release): LIBS += -LD:/opencv/build/x64/vc14/lib/ -lopencv_world331d
 else:unix: LIBS += -LD:/opencv/build/x64/vc14/lib/ -lopencv_world331
@@ -63,6 +65,7 @@ else:unix: LIBS += -LD:/opencv/build/x64/vc14/lib/ -lopencv_world331
 INCLUDEPATH += D:/opencv/build/include
 DEPENDPATH += D:/opencv/build/include
 
+# basler
 unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lPylonBase_v6_0
 unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lGCBase_MD_VC141_v3_1_Basler_pylon
 unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/BaslerDevelopment/lib/x64/' -lGenApi_MD_VC141_v3_1_Basler_pylon
@@ -75,3 +78,9 @@ DEPENDPATH += 'D:/Program Files (x86)/Tools/BaslerDevelopment/include'
 
 RESOURCES += \
     image.qrc
+
+# zbar
+unix|win32: LIBS += -L'D:/Program Files (x86)/Tools/ZBar_64/lib/' -llibzbar64-0
+
+INCLUDEPATH += 'D:/Program Files (x86)/Tools/ZBar_64/include'
+DEPENDPATH += 'D:/Program Files (x86)/Tools/ZBar_64/include'

@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include "cameramanager.h"
+#include "QTextBrowser"
+
 namespace Ui {
 class ParamDock;
 }
@@ -15,8 +17,14 @@ public:
     explicit ParamDock(QWidget *parent = 0);
     ~ParamDock();
 
+    QTextBrowser* message;
+
+signals:
+    void sendMessage(const QString& info);
+
 public slots:
     void updateCamera(QString &cameraName);
+    void reciveAndSendMessage(const QString& str);
 
 private slots:
     void on_hs_gain_valueChanged(int value);

@@ -20,7 +20,17 @@ class CameraWindow : public QMainWindow
 public:
     explicit CameraWindow(QWidget *parent = 0);
     ~CameraWindow();
+
+    // message 指针
+    QTextBrowser* mmessage = NULL;
+
+signals:
+    void sendMessage(const QString& info);
 private slots:
+    /**
+     * @brief 接收message
+     */
+    void receiveMessage(const QString& str);
     /**
      * @brief 初始化，更新菜单栏
      */
@@ -80,6 +90,8 @@ private slots:
     void updateCurrentCamera(QString &cameraName);
 
     void handleImageInfo(QPoint point, QRgb rgb);
+
+
 private:
     void createActionConnections();
 
@@ -97,9 +109,11 @@ private:
      * @return
      */
     CameraForm *activeMdiChild() const;
-private:
-    Ui::CameraWindow *ui;
 
+
+private:
+
+    Ui::CameraWindow *ui;
     QString mCurrentCamera;
     // 设备列表
     QDockWidget *mCameraListWidget;
@@ -109,6 +123,8 @@ private:
     QDockWidget *mCameraParamsWidget;
     // 相机属性的界面
     ParamDock* mParamDock;
+
+
 };
 
 #endif // CAMERAWINDOW_H

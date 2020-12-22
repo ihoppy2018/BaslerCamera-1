@@ -3,6 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsLineItem>
+#include "QTextBrowser"
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 class QMenu;
@@ -49,6 +50,8 @@ public:
      * @brief 只显示图像
      */
     void showCameraOnly();
+
+    QTextBrowser* message;
 protected:
     /**
      * @brief 鼠标移动事件，主要用于显示鼠标当前位置对应图像的像素
@@ -60,6 +63,7 @@ private slots:
     void handleSceneRectChanged(const QRectF &rect);
 signals:
     void sigImageInfo(QPoint point, QRgb rgb);
+    void sendMessage(const QString& info);
 private:
     void insertImage(const QImage &image);
     /**

@@ -37,14 +37,17 @@ int CameraManager::searchCameras()
         for (size_t i = 0; i < devices.size(); ++i) {
             string sn = devices[i].GetFriendlyName();
             mCameraList << QString::fromStdString(sn);
-            // qDebug() << "Using camera " << i << ": " << devices[i].GetModelName() << " (" << devices[i].GetIpAddress() << ")" << endl;
+            //qDebug() << "Using camera " << i << ": " << devices[i].GetModelName() << " (" << devices[i].GetIpAddress() << ")\n" ;
+           // 传递message的两种方式 1.传递指针 2.信号槽机制
+            this->message->append("searchCamera...");
+            emit sendMessage("searchCamera...(signals and solts)");
         }
     } catch (const GenICam::GenericException &e) {
         qCritical() << "An exception occurred: " << e.GetDescription() << endl;
         devices.clear();
     }
     // 本地模拟
-    mCameraList << "Camera0" << "Camera1" << "Camera2" << "Camera3" << "Camera5" << "Camera4";
+    //mCameraList << "Camera0" << "Camera1" << "Camera2" << "Camera3" << "Camera5" << "Camera4";
     // 对mCameraList排序
     mCameraList.sort();
     emit sigCameraUpdate(mCameraList);
@@ -312,6 +315,10 @@ void CameraManager::setGain(QString &name, qint64 value)
         // Make sure the calculated value is valid.
         qint64 newGainRaw = adjust(value, gainRaw->GetMin(), gainRaw->GetMax(), gainRaw->GetInc());
         gainRaw->SetValue(newGainRaw);
+        // 发送消息的两种方式 1.指针传递 2.信号槽机制
+        message->append(QString("set Gain : %1").arg(newGainRaw));
+        emit sendMessage(QString("set Gain : %1(sas)").arg(newGainRaw));
+
         qDebug() << "Gain : " << gainRaw->GetValue() << " (Min: " << gainRaw->GetMin() << "; Max: " << gainRaw->GetMax() << "; Inc: " << gainRaw->GetInc() << ")";
     } catch (const GenICam::GenericException &e) {
         // Error handling.

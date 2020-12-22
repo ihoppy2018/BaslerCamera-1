@@ -65,6 +65,8 @@ public:
      */
     void grabStop();
 
+    QTextBrowser* message = NULL;
+
 public slots:
     /**
      * @brief 更新显示相机采集的图像
@@ -115,8 +117,13 @@ public slots:
 
     void showGrid(bool checked = false);
     /***右击菜单栏的功能*****/
+
+    // 转发消息
+    void reciveAndSendMessage(const QString& info);
 signals:
     void sigImageInfo(QPoint point, QRgb rgb);
+    void sendMessage(const QString& info);
+
 private:
     void initMenu();
     /**

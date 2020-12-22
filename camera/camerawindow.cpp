@@ -11,11 +11,16 @@ CameraWindow::CameraWindow(QWidget *parent) :
     ui(new Ui::CameraWindow)
 {
     ui->setupUi(this);
+
+    // message 指针
+    mmessage = ui->Message;
+    mmessage->setTextColor(QColor().red());
     // 子窗口切换时，要更新菜单栏
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &CameraWindow::updateMenus);
+
     createDocks();
     createActionConnections();
-
+    mmessage->append("start");
     updateMenus();
 }
 
@@ -46,10 +51,15 @@ void CameraWindow::saveImage()
 
 void CameraWindow::openCamera()
 {
-    // 打开相机
-    CameraForm* child = new CameraForm;
+    // 打开相机 并且打开相机显示view
+    CameraForm* child = new CameraForm(this);
+    child->message = mmessage;
+    // 绑定child的message
+    connect(child, &CameraForm::sendMessage, this, &CameraWindow::receiveMessage);
+
     child->setCameraName(mCurrentCamera);
     bool res = child->openCamera(mCurrentCamera);
+
 
     if (res) {
         ui->mdiArea->addSubWindow(child)->showMaximized();
@@ -60,11 +70,19 @@ void CameraWindow::openCamera()
         ui->action_Contious->setEnabled(true);
         ui->action_Stop->setEnabled(true);
 
+
         mParamDock->updateCamera(mCurrentCamera);
     } else {
         delete child;
         QMessageBox::information(this, "提示", "打开失败");
     }
+
+    // 打开算法处理view
+//    CameraForm* algoWin = new CameraForm;
+//    algoWin->setCameraName(mCurrentCamera);
+//    ui->mdiArea->addSubWindow(algoWin)->showMaximized();
+//    algoWin->show();
+
 }
 
 void CameraWindow::closeCamera()
@@ -231,7 +249,12 @@ void CameraWindow::createActionConnections()
         } else {mCameraParamsWidget->hide();}});
 
     connect(ui->action_tile, &QAction::triggered, ui->mdiArea, &QMdiArea::tileSubWindows);
+
     connect(ui->action_cascade, &QAction::triggered, ui->mdiArea, &QMdiArea::cascadeSubWindows);
+
+    // 信息机制
+   connect(mDevicesDock, &DevicesDock::sendMessage, this, &CameraWindow::receiveMessage);
+   connect(mParamDock, &ParamDock::sendMessage, this, &CameraWindow::receiveMessage);
 }
 
 void CameraWindow::createDocks()
@@ -239,7 +262,8 @@ void CameraWindow::createDocks()
     // 设备列表
     mCameraListWidget = new QDockWidget(this);
     mCameraListWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    mDevicesDock = new DevicesDock;
+    mDevicesDock = new DevicesDock(this);
+    mDevicesDock->message->append("create mDeviceDock");    // test
     mCameraListWidget->setWidget(mDevicesDock);
     mCameraListWidget->setWindowTitle("设备");
     addDockWidget(Qt::LeftDockWidgetArea, mCameraListWidget);
@@ -249,12 +273,22 @@ void CameraWindow::createDocks()
     // 参数列表
     mCameraParamsWidget = new QDockWidget(this);
     mCameraParamsWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    mParamDock = new ParamDock;
+    mParamDock = new ParamDock(this);
+    mParamDock->message->append("create mParamDock");   // test
+
     mCameraParamsWidget->setWidget(mParamDock);
     mCameraParamsWidget->setWindowTitle("参数");
     addDockWidget(Qt::LeftDockWidgetArea, mCameraParamsWidget);
 //    mCameraParamsWidget->setVisible(false);
     connect(mDevicesDock, &DevicesDock::sigActivated, mParamDock, &ParamDock::updateCamera);
+
+    // 测试列表
+//    QDockWidget* testWidget = new QDockWidget(this);
+//    testWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+//    ParamDock *testDock = new ParamDock;
+//    testWidget->setWidget(testDock);
+//    testWidget->setWindowTitle("测试");
+//    addDockWidget(Qt::LeftDockWidgetArea, testWidget);
 }
 
 QMdiSubWindow *CameraWindow::findMdiChild(const QString &cameraName) const
@@ -275,3 +309,9 @@ CameraForm *CameraWindow::activeMdiChild() const
         return qobject_cast<CameraForm *>(activeSubWindow->widget());
     return 0;
 }
+
+void CameraWindow::receiveMessage(const QString& str)
+{
+    ui->Message->append(str);
+}
+

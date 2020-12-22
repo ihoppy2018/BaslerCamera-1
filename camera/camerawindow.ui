@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>728</width>
+    <height>571</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,13 @@
     <item>
      <widget class="QMdiArea" name="mdiArea"/>
     </item>
+    <item>
+     <widget class="QTextBrowser" name="Message">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -25,8 +32,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>22</height>
+     <width>728</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

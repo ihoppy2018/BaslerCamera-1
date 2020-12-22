@@ -3,10 +3,12 @@
 #include <QDebug>
 #include "cameramanager.h"
 
+
 MyCamera::MyCamera(QObject *parent) : QObject(parent),
     mCameraManager(CameraManager::getInstance())
 {
-
+    mmyAlgorithm = new myAlgorithm(this);
+    connect(mmyAlgorithm, &myAlgorithm::sendMessage, this, &MyCamera::reciveAndSendMessage);
 }
 
 MyCamera::~MyCamera()
@@ -18,6 +20,10 @@ MyCamera::~MyCamera()
 
 bool MyCamera::openCamera(const QString &cameraFN)
 {
+    // 传递 message指针 用于显示算法输出信息
+    mmyAlgorithm->message = message;
+    message->append("open Camera in mycamera");
+
     try {
         mCameraName = cameraFN;
         CDeviceInfo cInfo;
@@ -50,7 +56,6 @@ bool MyCamera::openCamera(const QString &cameraFN)
         mCamera = NULL;
         return false;
     }
-
     return true;
 }
 
@@ -79,19 +84,35 @@ void MyCamera::closeCamera()
 
 void MyCamera::OnImageGrabbed(CInstantCamera &camera, const CGrabResultPtr &grabResult)
 {
+
     Q_UNUSED(camera);
-   // When overwriting the current CGrabResultPtr, the old result will automatically be
-   // released and reused by CInstantCamera.
-//    CImageFormatConverter fc;
+    // When overwriting the current CGrabResultPtr, the old result will automatically be
+    // released and reused by CInstantCamera.
+    //CImageFormatConverter fc;
     if (grabResult->GrabSucceeded()) {
         uint32_t width = grabResult->GetWidth();
         uint32_t height = grabResult->GetHeight();
         cv::Mat image(height, width, CV_8UC1, (uint8_t*)(grabResult->GetBuffer()));
         if (!image.empty()) {
             //cv::imwrite("C:\\Users\\CF\\Desktop\\save\\2.jpg", image);
-            // 调试发现，如果不clone的话，会导致后续错误，可能是共用了BUFFER问题
-            qDebug() << "send sigle of sigGrabNewImage";
+            //调试发现，如果不clone的话，会导致后续错误，可能是共用了BUFFER问题
             emit sigGrabNewImage(image.clone());
+
+            // 算法处理测试
+//            emit sendMessage("start my algorithm process");
+//            qDebug() << "start my algorithm process";
+
+//            cv::Mat algo_img = mmyAlgorithm->detect_bar_auto(image);
+//            string filename = mmyAlgorithm->GetTimeAsFileName();
+
+//            mmyAlgorithm->saveResult(algo_img, "./pictures_dst/",filename);
+//            mmyAlgorithm->saveResult(image, "./pictures_src/", filename);
+
+//            emit sigGrabNewImage(algo_img);
+
+//            image.release();
+//            algo_img.release();
+
         }
          //本地模拟
 //        int position = qrand() % 6;
@@ -172,4 +193,10 @@ void MyCamera::grabStop()
     } catch (Pylon::GenericException &e) {
        qDebug() << QString("An exception occurred: ") + QString(e.GetDescription());
     }
+}
+
+// 转发消息
+void MyCamera::reciveAndSendMessage(const QString& info)
+{
+    emit sendMessage(info);
 }

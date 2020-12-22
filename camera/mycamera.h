@@ -6,6 +6,8 @@
 #include <pylon/PylonIncludes.h>
 #include <pylon/gige/PylonGigEIncludes.h>
 #include "baslerSDK/include/HardwareTriggerConfiguration.h"
+#include "../myalgorithm.h"
+#include "QTextBrowser"
 
 // Settings to use Basler GigE cameras.
 using namespace Basler_GigECameraParams;
@@ -26,6 +28,7 @@ public:
     explicit MyCamera(QObject *parent = nullptr);
     ~MyCamera();
 
+
     /**
      * @brief 打开相机
      * @param cameraFN
@@ -45,6 +48,7 @@ public:
      */
     void OnImageGrabbed(Pylon::CInstantCamera& camera, const Pylon::CGrabResultPtr& grabResult) override;
 
+    QTextBrowser* message = NULL;
 public slots:
     /**
      * @brief 采集一张图片
@@ -60,6 +64,9 @@ public slots:
      * @brief 停止采集图片
      */
     void grabStop();
+
+    // 转发消息
+    void reciveAndSendMessage(const QString& info);
 signals:
     /**
      * @brief 获取到新的图像
@@ -67,6 +74,10 @@ signals:
      * @param position 拍摄该图像位置
      */
     void sigGrabNewImage(cv::Mat image);
+
+    // 信息显示
+   void sendMessage(const QString& info);;
+
 private:
     // 单张拍摄
     CAcquireSingleFrameConfiguration mSingleConfiguration;
@@ -80,6 +91,9 @@ private:
     QString mCameraName;
     // 管理所有相机
     CameraManager *mCameraManager;
+
+    // 算法库
+    myAlgorithm* mmyAlgorithm;
 };
 
 #endif // MYCAMERA_H

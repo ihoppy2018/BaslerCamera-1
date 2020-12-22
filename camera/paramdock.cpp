@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QDir>
 #include <QDebug>
+#include "camerawindow.h"
 
 ParamDock::ParamDock(QWidget *parent) :
     QWidget(parent),
@@ -11,6 +12,14 @@ ParamDock::ParamDock(QWidget *parent) :
     mCameras(CameraManager::getInstance())
 {
     ui->setupUi(this);
+    // 获取message指针
+    CameraWindow *ptr = (CameraWindow*)parentWidget();
+    message = ptr->mmessage;
+    mCameras->message = message;
+    (message == NULL)? (qDebug() << "message is null") : (qDebug() << "message is noNUll"<< message);
+
+    // 信号槽传递message
+    connect(mCameras, &CameraManager::sendMessage, this, &ParamDock::reciveAndSendMessage);
 }
 
 ParamDock::~ParamDock()
@@ -35,6 +44,9 @@ void ParamDock::updateCamera(QString &cameraName)
 void ParamDock::on_hs_gain_valueChanged(int value)
 {
     ui->sbx_gain->setValue(value);
+    // 发送消息的两种方式 1.指针传递 2.信号槽机制
+    message->append(QString("gain is %1").arg(value));
+    emit sendMessage(QString("gain is %1(singals and slots)").arg(value));
 }
 
 void ParamDock::on_sbx_gain_valueChanged(int arg1)
@@ -318,4 +330,9 @@ void ParamDock::on_btn_save_clicked()
 void ParamDock::on_cbx_pixFormat_currentTextChanged(const QString &arg1)
 {
     mCameras->setPixelFormat(mCameraName, arg1);
+}
+
+void ParamDock::reciveAndSendMessage(const QString& info)
+{
+    emit sendMessage(info);
 }

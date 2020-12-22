@@ -17,6 +17,8 @@ public:
     explicit DevicesDock(QWidget *parent = 0);
     ~DevicesDock();
 
+    QTextBrowser* message = NULL;
+
 private slots:
     void on_btn_search_clicked();
 
@@ -26,8 +28,14 @@ private slots:
 
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
+
+public slots:
+    // 转接message
+    void reciveAndSendMessage(const QString& info);
+
 signals:
     void sigActivated(QString &cameraName);
+    void sendMessage(const QString& info);
 private:
     Ui::DevicesDock *ui;
     CameraManager *mCameras = NULL;

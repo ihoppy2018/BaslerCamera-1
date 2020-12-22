@@ -22,6 +22,10 @@ CameraForm::CameraForm(QWidget *parent) :
     // 相机采集和显示
     qRegisterMetaType<cv::Mat>("cv::Mat");  // 注册cv::Mat
     connect(mCamera, &MyCamera::sigGrabNewImage, this, &CameraForm::updateCameraImage);
+
+    // message 发送给主界面
+    connect(mCamera, &MyCamera::sendMessage, this, &CameraForm::reciveAndSendMessage);
+
 }
 
 CameraForm::~CameraForm()
@@ -49,9 +53,17 @@ void CameraForm::setCameraId(int id)
 
 void CameraForm::updateCameraImage(cv::Mat image)
 {
-//    QImage img((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_RGB888);
-    QImage img((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_Indexed8);
-    mScene->updateImage(img);
+    if(image.channels() == 3)
+    {
+        QImage img((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_BGR888);
+         mScene->updateImage(img);
+    }else if(image.channels() == 1)
+    {
+        QImage img((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_Indexed8);
+         mScene->updateImage(img);
+    }
+
+
 }
 
 void CameraForm::updateROI(cv::Mat image, double width, double height, double x, double y)
@@ -184,6 +196,10 @@ void CameraForm::setCameraName(const QString &cameraName)
 
 bool CameraForm::openCamera(const QString &cameraName)
 {
+    //message 指针传递
+    mCamera->message = message;
+    // 使用信号槽 发送message
+    emit sendMessage(QString("start open Camera:%1 in cameraform").arg(cameraName));
     return mCamera->openCamera(cameraName);
 }
 
@@ -205,4 +221,9 @@ void CameraForm::grabContinous()
 void CameraForm::grabStop()
 {
     mCamera->grabStop();
+}
+
+void CameraForm::reciveAndSendMessage(const QString& info)
+{
+    emit sendMessage(info);
 }

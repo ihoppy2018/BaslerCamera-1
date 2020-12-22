@@ -7,6 +7,7 @@
 #include <pylon/gige/PylonGigEIncludes.h>
 #include "opencv2/opencv.hpp"
 #include "QMutex"
+#include "QTextBrowser"
 
 // Settings to use Basler GigE cameras.
 using namespace Basler_GigECameraParams;
@@ -171,10 +172,13 @@ public:
     virtual void OnGrabError(Pylon::CInstantCamera& camera, const char* errorMessage) override;
     virtual void OnCameraDeviceRemoved(Pylon::CInstantCamera& camera) override;
 
+    QTextBrowser* message;
+
 signals:
     void sigCameraUpdate(const QStringList &list);
 
     void sigupdateImage(cv::Mat image);
+    void sendMessage(const QString& info);
 
 public slots:
 
